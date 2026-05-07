@@ -1,159 +1,144 @@
-# 🌍 Système de Gestion de Catastrophe Naturelle
+# Système de Gestion de Catastrophe Naturelle
 
-<p align="center">
-  <img src="https://img.shields.io/badge/language-C-blue.svg">
-  <img src="https://img.shields.io/badge/graphics-Raylib-green.svg">
-  <img src="https://img.shields.io/badge/status-Academic%20Project-orange.svg">
-  <img src="https://img.shields.io/badge/build-Makefile-lightgrey.svg">
-</p>
+Application développée en C qui simule la gestion d'une catastrophe naturelle en s'appuyant sur la théorie des graphes pour optimiser l'acheminement des secours et l'utilisation du réseau routier. Une interface graphique interactive avec Raylib permet de visualiser le réseau et l'état des routes en temps réel.
 
----
+## Contexte
 
-## 📌 Description
+Projet académique réalisé à l'ESIEA (janvier – juin 2025) dans le cadre du module **INF2032 – Graphes et Applications**. Travail d'équipe (3 personnes).
 
-Ce projet est une application développée en **C** qui simule la gestion d’une catastrophe naturelle en utilisant la **théorie des graphes**.
+## Modèle simulé
 
-L’objectif est d’optimiser :
+Le réseau modélisé comprend 50 sommets répartis en trois catégories :
+- **30 villes** (Ville_0 à Ville_29)
+- **10 hôpitaux** (Hopital_30 à Hopital_39)
+- **10 entrepôts** (Entrepot_40 à Entrepot_49)
 
-* 🚑 l’acheminement des secours
-* 📦 la distribution des ressources
-* 🛣️ l’utilisation du réseau routier
+Chaque arête (route) porte trois attributs :
+- **Distance** en kilomètres
+- **État** : OK (2), endommagée (1), ou détruite (0)
+- **Capacité** maximale en véhicules
 
-Une **interface graphique avec Raylib** permet de visualiser le système en temps réel.
+Certains sommets possèdent un niveau d'urgence permettant de prioriser l'intervention des secours.
 
----
+## Fonctionnalités
 
-## 🚀 Fonctionnalités
+### Analyse du réseau
+- Affichage de toutes les routes avec leur état, distance et capacité
+- Identification des sommets accessibles depuis un point de départ (parcours DFS)
+- Identification des sommets inaccessibles
+- Mise en évidence des routes endommagées à sécuriser
 
-### 🔹 Analyse du réseau
+### Optimisation des trajets
+- Calcul du plus court chemin entre deux sommets (algorithme de Dijkstra)
+- Prise en compte de l'état des routes : les routes détruites sont automatiquement exclues du calcul
 
-* Visualisation des routes et de leurs états
-* Identification des zones accessibles / inaccessibles
+### Gestion des secours
+- Calcul du nombre de véhicules de secours pouvant emprunter une route donnée à partir de sa capacité
+- Estimation du temps de transport en fonction de la distance
 
-### 🔹 Connectivité
+### Interface utilisateur
+- Menu interactif en terminal pour piloter les fonctionnalités
+- Visualisation graphique du réseau routier via Raylib :
+  - Affichage des 50 sommets répartis sur une grille
+  - Code couleur des arêtes selon l'état (vert : OK, orange : endommagée, rouge : détruite)
+  - Info-bulle au survol d'une route (distance, capacité, état)
+  - Légende intégrée
 
-* Détection des composantes du graphe
+## Algorithmes et concepts
 
-### 🔹 Optimisation des trajets
+- Graphes orientés pondérés
+- Représentation par listes d'adjacence (listes chaînées)
+- Parcours en profondeur (DFS) récursif pour l'analyse de connectivité
+- Algorithme de Dijkstra pour les plus courts chemins (implémentation array-based, complexité O(V²))
 
-* Calcul des plus courts chemins
-* Adaptation dynamique en cas de routes endommagées
+## Structures de données
 
-### 🔹 Sécurisation
+```c
+typedef struct Arc {
+    int dest;
+    int distance;
+    int etat;
+    int capacite;
+    struct Arc* suivant;
+} Arc;
 
-* Identification des routes critiques
-* Minimisation du coût du réseau
+typedef struct Sommet {
+    int id;
+    char nom[50];
+    int type;
+    Arc* arcs;
+    int urgence;
+} Sommet;
 
-### 🔹 Gestion des secours
-
-* Optimisation du flux de véhicules
-* Gestion des priorités (urgence, type de mission)
-* Calcul des délais de transport
-
-### ⭐ Bonus
-
-* Optimisation des ressources (type sac à dos)
-* Amélioration du réseau avec un minimum de routes
-
----
-
-## 🧠 Concepts utilisés
-
-* Graphes orientés pondérés
-* BFS / DFS
-* Algorithmes de plus court chemin
-* Arbre couvrant minimal
-* Flot maximal
-* Optimisation combinatoire
-
----
-
-## 🛠️ Technologies
-
-* **Langage :** C
-* **Graphique :** Raylib
-* **Build :** Makefile
-
----
-
-## 🎮 Interface graphique (Raylib)
-
-* Visualisation du graphe
-* Affichage des villes / hôpitaux / entrepôts
-* Simulation des déplacements des secours
-* Interface interactive
-
----
-
-## 📂 Structure du projet
-
-```text
-project/
-├── main.c
-├── graph.c / graph.h
-├── algorithms.c / algorithms.h
-├── interface.c / interface.h
-├── Makefile
-└── README.md
+typedef struct Graphe {
+    int ordre;
+    Sommet sommets[MAX];
+} Graphe;
 ```
 
----
+## Stack technique
 
-## ⚙️ Installation
+- **Langage :** C (C99)
+- **Visualisation :** Raylib
+- **Build :** Makefile (gcc)
 
-### 🔧 Prérequis
+## Structure du projet
 
-* gcc
-* make
-* raylib
+```
+main.c         - point d'entrée et initialisation du graphe
+fonctions.c    - logique du graphe et algorithmes (DFS, Dijkstra, secours)
+interface.c    - couche de visualisation Raylib + affichage terminal
+programme.h    - types et déclarations partagés (Graphe, Arc, Sommet)
+interface.h    - interface publique de la couche de visualisation
+Makefile       - configuration de build
+```
 
-### 📦 Installer Raylib
+## Installation
 
-#### Linux (Ubuntu)
+### Prérequis
+- gcc
+- make
+- raylib
 
+### Installation de Raylib
+
+**Linux (Ubuntu / Debian) :**
 ```bash
 sudo apt install libraylib-dev
 ```
 
-#### macOS
-
+**macOS :**
 ```bash
 brew install raylib
 ```
 
----
-
-## ▶️ Compilation & Exécution
+## Compilation et exécution
 
 ```bash
+git clone https://github.com/ahmedjaziri2006-dot/Systeme-Optimisation-Secours-Catastrophe
+cd Systeme-Optimisation-Secours-Catastrophe
 make
-./main
+./projet
 ```
 
----
+Pour nettoyer les fichiers compilés :
+```bash
+make clean
+```
 
-## 📸 Aperçu (optionnel)
+## Compétences mises en œuvre
 
-> Ajoutez ici des captures d’écran de votre interface Raylib pour améliorer votre repo
+- Théorie des graphes appliquée à un problème de routage et d'allocation de ressources
+- Implémentation d'algorithmes classiques (DFS, Dijkstra) en C from scratch
+- Architecture modulaire séparant la logique algorithmique de la couche de visualisation
+- Manipulation de structures de données chaînées (listes d'adjacence dynamiques)
+- Intégration d'une bibliothèque graphique (Raylib) avec un cœur algorithmique en C
+- Conception d'une interface graphique interactive avec gestion d'événements (survol, info-bulles)
 
----
+## Auteurs
 
-## 👥 Auteurs
+Projet réalisé en équipe à l'ESIEA par Ahmed Jaziri et coéquipiers.
 
-Projet réalisé dans le cadre du module **INF2032 – Graphes et Applications**
-
-* 👤 Votre Nom
-* 👤 Coéquipier 1
-* 👤 Coéquipier 2
-
----
-
-## 📜 Licence
+## Licence
 
 Projet académique à but pédagogique.
-
----
-
-## ⭐ Remarque
-
-Ce projet met en pratique des concepts avancés d’algorithmique et de modélisation pour résoudre des problèmes réels liés aux catastrophes naturelles.
